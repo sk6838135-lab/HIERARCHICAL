@@ -1,0 +1,718 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hierarchical Clustering | Machine Learning</title>
+
+<style>
+:root {
+  --purple: #9270d8;
+  --dark: #39285f;
+  --light: #f1ebff;
+  --text: #514866;
+  --border: #e4dcf5;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #faf9ff;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 8%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.logo {
+  font-weight: bold;
+  color: var(--dark);
+  font-size: 20px;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--text);
+  font-size: 14px;
+}
+
+nav a:hover {
+  color: var(--purple);
+}
+
+.hero {
+  padding: 85px 8%;
+  background: linear-gradient(135deg, #f1ebff, #ffffff);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.tag {
+  display: inline-block;
+  background: white;
+  border: 1px solid var(--border);
+  padding: 5px 14px;
+  border-radius: 20px;
+  color: var(--purple);
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: clamp(34px, 5vw, 56px);
+  color: var(--dark);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  max-width: 760px;
+  margin: auto;
+  font-size: 17px;
+}
+
+.button {
+  display: inline-block;
+  margin-top: 26px;
+  background: var(--purple);
+  color: white;
+  padding: 12px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+main {
+  max-width: 1050px;
+  padding: 35px 22px;
+  margin: auto;
+}
+
+section {
+  background: white;
+  padding: 30px;
+  margin: 25px 0;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  scroll-margin-top: 20px;
+}
+
+h2 {
+  color: var(--dark);
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+h3 {
+  color: var(--purple);
+  margin: 18px 0 8px;
+}
+
+p {
+  margin-bottom: 13px;
+}
+
+ul, ol {
+  padding-left: 25px;
+  margin-bottom: 14px;
+}
+
+li {
+  margin-bottom: 7px;
+}
+
+.formula {
+  background: var(--light);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  color: var(--dark);
+  font-size: 20px;
+  font-weight: bold;
+  margin: 18px 0;
+  overflow-wrap: anywhere;
+}
+
+.note {
+  background: #f8f4ff;
+  border-left: 4px solid var(--purple);
+  padding: 15px;
+  border-radius: 6px;
+  margin: 15px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: var(--light);
+  color: var(--dark);
+}
+
+.code-wrap {
+  position: relative;
+  margin: 18px 0;
+}
+
+pre {
+  background: #29213b;
+  color: #f5efff;
+  padding: 22px;
+  border-radius: 10px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--purple);
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chart {
+  width: 100%;
+  display: block;
+  background: #fdfcff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.metric {
+  background: var(--light);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.metric strong {
+  display: block;
+  color: var(--dark);
+  margin-bottom: 5px;
+}
+
+footer {
+  background: var(--dark);
+  color: white;
+  padding: 30px 8%;
+  text-align: center;
+  margin-top: 35px;
+}
+
+footer p {
+  margin: 5px 0;
+}
+
+@media (max-width: 600px) {
+  header {
+    padding: 16px 5%;
+  }
+
+  nav {
+    gap: 10px;
+  }
+
+  .hero {
+    padding: 60px 6%;
+  }
+
+  section {
+    padding: 22px 17px;
+  }
+
+  h2 {
+    font-size: 23px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">ML STUDY NOTES</div>
+  <nav>
+    <a href="#introduction">Introduction</a>
+    <a href="#working">Working</a>
+    <a href="#maths">Mathematics</a>
+    <a href="#python">Python</a>
+    <a href="#applications">Applications</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <span class="tag">MACHINE LEARNING • UNSUPERVISED LEARNING</span>
+  <h1>Hierarchical Clustering</h1>
+  <p>
+    Understanding how machine learning groups similar data points into a
+    hierarchy of clusters using distance, mathematical methods, and
+    real-world examples.
+  </p>
+  <a href="#introduction" class="button">Start Learning ↓</a>
+</div>
+
+<main>
+
+<section id="introduction">
+  <h2>01. Introduction</h2>
+  <p>
+    Hierarchical Clustering is an unsupervised machine learning algorithm
+    that groups similar data points into clusters. It creates a hierarchy
+    of groups that can be visualized using a tree-like diagram called a
+    <strong>dendrogram</strong>.
+  </p>
+  <p>
+    Unlike algorithms that require the number of clusters in advance,
+    hierarchical clustering allows us to examine different levels of
+    grouping and choose an appropriate number of clusters later.
+  </p>
+
+  <div class="note">
+    <strong>Key idea:</strong> Similar data points are grouped together,
+    while dissimilar data points are separated into different clusters.
+  </div>
+
+  <h3>Type of Machine Learning</h3>
+  <ul>
+    <li><strong>Learning type:</strong> Unsupervised learning</li>
+    <li><strong>Input:</strong> Data without predefined class labels</li>
+    <li><strong>Output:</strong> Nested groups of similar observations</li>
+    <li><strong>Visualization:</strong> Dendrogram</li>
+  </ul>
+</section>
+
+<section id="working">
+  <h2>02. Description and Working</h2>
+  <p>There are two main approaches to hierarchical clustering.</p>
+
+  <h3>A. Agglomerative Clustering</h3>
+  <p>
+    This is a bottom-up approach. Initially, every data point is treated
+    as a separate cluster. The closest clusters are repeatedly merged
+    until all points belong to one cluster or the required stopping
+    condition is reached.
+  </p>
+
+  <h3>B. Divisive Clustering</h3>
+  <p>
+    This is a top-down approach. Initially, all data points belong to
+    one cluster. The algorithm repeatedly divides clusters into smaller
+    groups.
+  </p>
+
+  <table>
+    <tr>
+      <th>Feature</th>
+      <th>Agglomerative</th>
+      <th>Divisive</th>
+    </tr>
+    <tr>
+      <td>Approach</td>
+      <td>Bottom-up</td>
+      <td>Top-down</td>
+    </tr>
+    <tr>
+      <td>Starting point</td>
+      <td>Each point is separate</td>
+      <td>All points are together</td>
+    </tr>
+    <tr>
+      <td>Main operation</td>
+      <td>Merge clusters</td>
+      <td>Split clusters</td>
+    </tr>
+  </table>
+
+  <h3>Steps of Agglomerative Clustering</h3>
+  <ol>
+    <li>Collect and prepare the dataset.</li>
+    <li>Calculate distances between data points.</li>
+    <li>Treat each observation as a separate cluster.</li>
+    <li>Merge the two closest clusters using a linkage method.</li>
+    <li>Repeat the process and record the merging distances.</li>
+    <li>Draw a dendrogram and select a suitable cluster count.</li>
+  </ol>
+</section>
+
+<section id="maths">
+  <h2>03. Mathematical Formula</h2>
+  <p>
+    Clustering commonly begins by measuring the distance between data
+    points. For numerical data, one popular method is Euclidean distance.
+  </p>
+
+  <div class="formula">
+    d(A,B) = √[(x₂ − x₁)² + (y₂ − y₁)²]
+  </div>
+
+  <p>Consider two points:</p>
+  <ul>
+    <li>Point A = (2, 3)</li>
+    <li>Point B = (5, 7)</li>
+  </ul>
+
+  <h3>Step-by-step calculation</h3>
+  <p><strong>Step 1:</strong> Substitute the coordinates.</p>
+  <div class="formula">d = √[(5 − 2)² + (7 − 3)²]</div>
+
+  <p><strong>Step 2:</strong> Calculate the differences.</p>
+  <div class="formula">d = √[3² + 4²]</div>
+
+  <p><strong>Step 3:</strong> Square and add the values.</p>
+  <div class="formula">d = √[9 + 16] = √25</div>
+
+  <p><strong>Final answer:</strong></p>
+  <div class="formula">d(A,B) = 5</div>
+
+  <p>
+    The distance between the two points is 5 units. A smaller distance
+    generally indicates greater similarity under this distance measure.
+  </p>
+
+  <h3>Linkage methods</h3>
+  <table>
+    <tr>
+      <th>Method</th>
+      <th>Meaning</th>
+    </tr>
+    <tr>
+      <td>Single linkage</td>
+      <td>Minimum distance between points in two clusters.</td>
+    </tr>
+    <tr>
+      <td>Complete linkage</td>
+      <td>Maximum distance between points in two clusters.</td>
+    </tr>
+    <tr>
+      <td>Average linkage</td>
+      <td>Average pairwise distance between two clusters.</td>
+    </tr>
+    <tr>
+      <td>Ward's method</td>
+      <td>Merges clusters to minimize the increase in within-cluster variance.</td>
+    </tr>
+  </table>
+
+  <div class="note">
+    <strong>Important:</strong> The distance formula measures similarity
+    between individual points. Linkage determines how the distance
+    between entire clusters is calculated.
+  </div>
+</section>
+
+<section id="dendrogram">
+  <h2>04. Understanding a Dendrogram</h2>
+  <p>
+    A dendrogram is a tree diagram showing when clusters merge and the
+    distance at which they merge. The vertical height of each joining
+    point represents the linkage distance.
+  </p>
+
+  <svg class="chart" viewBox="0 0 600 340" role="img"
+       aria-label="Illustrative dendrogram with four observations merging into two groups and then one group">
+    <rect x="0" y="0" width="600" height="340" rx="10" fill="#fdfcff"/>
+    <g stroke="#e4dcf5" stroke-width="1">
+      <line x1="70" y1="60" x2="555" y2="60"/>
+      <line x1="70" y1="110" x2="555" y2="110"/>
+      <line x1="70" y1="160" x2="555" y2="160"/>
+      <line x1="70" y1="210" x2="555" y2="210"/>
+      <line x1="70" y1="260" x2="555" y2="260"/>
+    </g>
+    <g stroke="#9270d8" stroke-width="4" fill="none" stroke-linecap="round">
+      <path d="M130 260 V210 H190 V260"/>
+      <path d="M330 260 V180 H390 V260"/>
+      <path d="M160 210 V130 H360 V180"/>
+    </g>
+    <g fill="#39285f" font-size="14" font-family="Arial" text-anchor="middle">
+      <text x="130" y="285">A</text>
+      <text x="190" y="285">B</text>
+      <text x="330" y="285">C</text>
+      <text x="390" y="285">D</text>
+      <text x="300" y="320">Observations</text>
+    </g>
+    <g fill="#514866" font-size="12" font-family="Arial">
+      <text x="28" y="264">0</text>
+      <text x="22" y="214">2</text>
+      <text x="22" y="164">4</text>
+      <text x="22" y="114">6</text>
+      <text x="22" y="64">8</text>
+      <text x="80" y="25">Linkage distance (illustrative)</text>
+    </g>
+    <line x1="70" y1="260" x2="555" y2="260" stroke="#9270d8" stroke-width="1.5"/>
+  </svg>
+
+  <p>
+    In this illustrative diagram, A and B form one group, while C and D
+    form another. These groups later merge into a larger cluster.
+  </p>
+
+  <div class="note">
+    The diagram is conceptual and uses illustrative distances. It is not
+    a plot generated from the Python example below.
+  </div>
+</section>
+
+<section id="python">
+  <h2>05. Python Implementation</h2>
+  <p>
+    We can use Python's <strong>scikit-learn</strong> library to perform
+    agglomerative clustering. This example groups customers based on
+    annual spending and visit frequency.
+  </p>
+
+  <h3>Python code</h3>
+
+  <div class="code-wrap">
+    <button class="copy-btn" onclick="copyCode()">Copy Code</button>
+    <pre id="pythonCode"><code>import pandas as pd
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.preprocessing import StandardScaler
+
+data = pd.DataFrame({
+    "Spending": [20, 22, 25, 70, 75, 80],
+    "Visits": [2, 3, 2, 8, 9, 8]
+})
+
+X = StandardScaler().fit_transform(data)
+
+model = AgglomerativeClustering(n_clusters=2)
+data["Cluster"] = model.fit_predict(X)
+
+print(data)</code></pre>
+  </div>
+
+  <h3>Code explanation</h3>
+  <ul>
+    <li><strong>pandas:</strong> Stores the customer data in a table.</li>
+    <li><strong>StandardScaler:</strong> Scales both features to comparable units.</li>
+    <li><strong>AgglomerativeClustering:</strong> Performs hierarchical clustering.</li>
+    <li><strong>n_clusters=2:</strong> Requests two final clusters.</li>
+    <li><strong>fit_predict():</strong> Groups each observation and returns its cluster label.</li>
+  </ul>
+
+  <h3>Sample dataset</h3>
+  <table>
+    <tr>
+      <th>Customer</th>
+      <th>Annual spending (illustrative units)</th>
+      <th>Visits</th>
+    </tr>
+    <tr><td>1</td><td>20</td><td>2</td></tr>
+    <tr><td>2</td><td>22</td><td>3</td></tr>
+    <tr><td>3</td><td>25</td><td>2</td></tr>
+    <tr><td>4</td><td>70</td><td>8</td></tr>
+    <tr><td>5</td><td>75</td><td>9</td></tr>
+    <tr><td>6</td><td>80</td><td>8</td></tr>
+  </table>
+
+  <p>
+    The first three customers have relatively low spending and visit
+    frequency. The last three have higher values. The algorithm may
+    separate these observations into two groups.
+  </p>
+
+  <div class="note">
+    <strong>To run:</strong> Install the required libraries using
+    <code>pip install pandas scikit-learn</code>, then run the Python
+    code in Jupyter Notebook, Google Colab, or your computer.
+    Cluster labels such as 0 and 1 are identifiers, not rankings.
+  </div>
+</section>
+
+<section id="statistics">
+  <h2>06. Data Analysis and Statistics</h2>
+  <p>
+    Hierarchical clustering is mainly used to discover groups rather than
+    predict a target value. The quality of the groups can be examined
+    using suitable clustering metrics.
+  </p>
+
+  <div class="metrics">
+    <div class="metric">
+      <strong>Distance matrix</strong>
+      <p>Shows pairwise distances between observations or clusters.</p>
+    </div>
+    <div class="metric">
+      <strong>Dendrogram</strong>
+      <p>Helps examine cluster merging and choose a cut level.</p>
+    </div>
+    <div class="metric">
+      <strong>Silhouette score</strong>
+      <p>Measures how well observations fit their own clusters compared with others.</p>
+    </div>
+    <div class="metric">
+      <strong>Cluster size</strong>
+      <p>Shows the number of observations assigned to each group.</p>
+    </div>
+  </div>
+
+  <h3>Silhouette score</h3>
+  <div class="formula">s = (b − a) / max(a, b)</div>
+  <p>
+    Here, <strong>a</strong> is the average distance to points in the
+    same cluster, and <strong>b</strong> is the lowest average distance
+    to points in another cluster.
+  </p>
+  <ul>
+    <li>A score close to +1 generally indicates well-separated clusters.</li>
+    <li>A score around 0 suggests overlapping clusters.</li>
+    <li>A negative score may indicate that some points fit another cluster better.</li>
+  </ul>
+
+  <div class="note">
+    The appropriate metric depends on the data and the clustering goal.
+    There is no single statistic that proves a clustering result is
+    correct in every situation.
+  </div>
+</section>
+
+<section id="applications">
+  <h2>07. Real-World Applications</h2>
+
+  <h3>1. Customer segmentation</h3>
+  <p>
+    Businesses can group customers by spending, purchase frequency,
+    and other characteristics to understand different customer types.
+  </p>
+
+  <h3>2. Healthcare</h3>
+  <p>
+    Researchers can explore similarities between patient records or
+    biological measurements to identify patterns for further study.
+  </p>
+
+  <h3>3. Document grouping</h3>
+  <p>
+    Similar articles, reports, and documents can be grouped using
+    numerical representations of their content.
+  </p>
+
+  <h3>4. Biology and genetics</h3>
+  <p>
+    Hierarchical clustering can help visualize similarities among
+    species, genes, or biological samples.
+  </p>
+
+  <h3>5. Image analysis</h3>
+  <p>
+    It can group image regions or image features based on their
+    similarities.
+  </p>
+
+  <h3>Advantages</h3>
+  <ul>
+    <li>Does not require predefined class labels.</li>
+    <li>The dendrogram makes nested relationships easier to inspect.</li>
+    <li>Different cluster counts can be explored by cutting the hierarchy.</li>
+  </ul>
+
+  <h3>Limitations</h3>
+  <ul>
+    <li>Can be computationally expensive for large datasets.</li>
+    <li>Results can be affected by scaling, distance choice, and linkage method.</li>
+    <li>Early merge decisions are generally not undone in standard agglomerative clustering.</li>
+    <li>Choosing the final number of clusters may require interpretation.</li>
+  </ul>
+</section>
+
+<section id="conclusion">
+  <h2>08. Conclusion</h2>
+  <p>
+    Hierarchical Clustering is an unsupervised machine learning technique
+    that organizes similar observations into a hierarchy of clusters.
+    Agglomerative clustering combines small groups, while divisive
+    clustering splits larger groups.
+  </p>
+  <p>
+    Distance measures and linkage methods determine how groups are formed,
+    and a dendrogram helps us understand the structure. It is useful in
+    customer segmentation, healthcare research, document analysis, and
+    biological studies.
+  </p>
+
+  <div class="note">
+    <strong>Final takeaway:</strong> Hierarchical clustering helps discover
+    the hidden structure of data without requiring predefined labels.
+    Good results depend on suitable preprocessing, distance measures,
+    linkage methods, and interpretation.
+  </div>
+</section>
+
+<section id="references">
+  <h2>09. References</h2>
+  <ul>
+    <li><a href="https://scikit-learn.org/stable/modules/clustering.html#hierarchical-clustering" target="_blank" rel="noopener">Scikit-learn: Hierarchical clustering</a></li>
+    <li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.AgglomerativeClustering.html" target="_blank" rel="noopener">Scikit-learn: AgglomerativeClustering documentation</a></li>
+    <li><a href="https://scikit-learn.org/stable/modules/clustering.html#silhouette-coefficient" target="_blank" rel="noopener">Scikit-learn: Silhouette coefficient</a></li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <p><strong>Hierarchical Clustering — Machine Learning Study Blog</strong></p>
+  <p>Educational notes for classroom presentation and revision.</p>
+</footer>
+
+<script>
+function copyCode() {
+  const code = document.getElementById("pythonCode").innerText;
+  const button = document.querySelector(".copy-btn");
+
+  navigator.clipboard.writeText(code).then(() => {
+    button.innerText = "Copied!";
+    setTimeout(() => button.innerText = "Copy Code", 1500);
+  }).catch(() => {
+    button.innerText = "Select code to copy";
+  });
+}
+</script>
+
+</body>
+</html>
